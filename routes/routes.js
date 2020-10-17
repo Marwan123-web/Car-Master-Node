@@ -9,7 +9,16 @@ router.post('/login', adminController.login);
 
 router.get('/profile/:id', adminController.profile);
 
-router.put('/updateuser/:id', adminController.updateUser);
+router.get('/mypassword/:id', adminController.Password);
+
+router.get('/comparepassword/:id/:password', adminController.ComparePassword);
+
+
+
+router.put('/updateuser/:id', adminController.updateEmail);
+
+router.put('/updatepassword/:id', adminController.updatePassword);
+
 
 //------------------------Car-------------------
 router.post('/addcar', adminController.addCar);
@@ -18,7 +27,12 @@ router.get('/car/:id', adminController.getCar);
 
 router.get('/cars', adminController.getCars);
 
-router.get('/carsforadmin', adminController.getCarsForAdmin);
+router.get('/new/cars', adminController.getNewCars);
+
+router.get('/used/cars', adminController.getUsedCars);
+
+
+// router.get('/carsforadmin', adminController.getCarsForAdmin);
 
 
 router.delete('/deletecar/:id', adminController.deleteCar);
@@ -34,6 +48,9 @@ router.post('/addtofavourites/:id/:carid', adminController.addToFavourites);
 
 router.get('/filter/cars', adminController.filterCars);
 router.get('/mostviewscars', adminController.MostViewsCars);
+
+router.get('/allmostviewscars', adminController.AllMostViewsCars);
+
 router.get('/latestcars', adminController.RecentCars);
 
 

@@ -5,15 +5,31 @@ class adminService {
     static getMyData(id) {
         return User.findOne({ _id: id }, { password: 0 })
     }
+
+    static getMyPassword(id) {
+        return User.findOne({ _id: id })
+    }
+
     static getCarData(id) {
         return Car.findOne({ _id: id })
     }
+
     static getAllCars() {
-        return Car.find({ Reserved: 'no' })
-    }
-    static getAllCarsForAdmin() {
         return Car.find()
     }
+
+    static getAllNewCars() {
+        return Car.find({ Condition: "New" })
+    }
+
+    static getAllUsedCars() {
+        return Car.find({ Condition: { $ne: "New" } })
+    }
+
+    // static getAllCarsForAdmin() {
+    //     return Car.find()
+    // }
+
     static deleteCar(id) {
         return Car.findOneAndDelete({ _id: id });
     }
@@ -28,24 +44,41 @@ class adminService {
             { multi: true } // set this to true if you want to remove multiple elements.
         );
     }
+
     static async increamentCarViews(id) {
         return Car.updateOne(
             { _id: id },
             { $inc: { Views: 1 } }
         )
     }
+
     static async getMostViewsCars() {
         return Car.aggregate([
-            { $project: { Views: 1, Price: 1, Title: 1, Brand: 1, Model: 1 } },
+            { $project: { Views: 1, Price: 1, Title: 1, Brand: 1, Model: 1, Images: 1 } },
             { $sort: { Views: -1 } },
         ]).limit(5);
+    }
+
+    static async getAllMostViewsCars() {
+        return Car.aggregate([
+            { $project: { Views: 1, Price: 1, Title: 1, Brand: 1, Model: 1, Images: 1 } },
+            { $sort: { Views: -1 } },
+        ]);
     }
     // views: { $max: ["$Views"] },
     static async getlatestCars() {
         return Car.aggregate([
-            { $project: { Views: 1, Price: 1, Title: 1, DateOfPost: 1, Brand: 1, Model: 1 } },
+            { $project: { Views: 1, Price: 1, Title: 1, DateOfPost: 1, Brand: 1, Model: 1, Images: 1 } },
             { $sort: { DateOfPost: -1 } },
         ]).limit(5);
+    }
+
+    static async updatePassword(id, newpassword) {
+        return User.updateOne({ _id: id }, {
+            $set: {
+                password: newpassword
+            }
+        })
     }
 }
 module.exports = adminService;

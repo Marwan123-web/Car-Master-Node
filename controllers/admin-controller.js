@@ -26,6 +26,8 @@ const possibleQueryVars = [
     'Model',
     'Body'
 ];
+
+
 // ---------------------Register----------------------
 exports.Register = async (req, res, next) => { //[]
     try {
@@ -50,6 +52,18 @@ exports.Register = async (req, res, next) => { //[]
     }
 }
 
+exports.ComparePassword = async (req, res, next) => { //[]
+    let id = req.params.id;
+    let password = req.params.password;
+    let user = await User.findOne({ _id: id });
+    const validPassword = await validatePassword(password, user.password);
+    if (!validPassword) {
+        res.status(400).json({ msg: 'ID or Password is not correct' });
+    }
+    else {
+        res.status(200).json(user);
+    }
+}
 // ---------------------Login----------------------
 exports.login = async (req, res, next) => { //[]
     try {
@@ -88,9 +102,24 @@ exports.profile = async (req, res, next) => { //[]
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
+// ---------------------Password----------------------
+exports.Password = async (req, res, next) => { //[]
+    let id = req.params.id;
+    adminService.getMyPassword(id).then((data) => {
+        if (data) {
+            data.password
+            res.json(data);
+        } else {
+            res.status(404).json({ msg: 'Your Data Not Found' });
+        }
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({ msg: 'Internal Server Error' });
+    })
+}
 
 // --------------------update User by ID----------------------
-exports.updateUser = async (req, res, next) => { //[]
+exports.updateEmail = async (req, res, next) => { //[]
     let id = req.params.id;
     try {
         let checkforUser = await User.findOne({
@@ -107,9 +136,9 @@ exports.updateUser = async (req, res, next) => { //[]
                 req.body, { useFindAndModify: false },
                 (err) => {
                     if (err) {
-                        res.status(404).json({ msg: "Can't Update this User Information" });
+                        res.status(404).json({ msg: "Can't Update Your Email" });
                     }
-                    res.status(201).json({ msg: "User's Information Updated Successfuly" });
+                    res.status(201).json({ msg: "Email Updated Successfuly" });
                 });
         }
     } catch (err) {
@@ -117,18 +146,48 @@ exports.updateUser = async (req, res, next) => { //[]
         res.status(500).send("Error in Server");
     }
 }
-
+exports.updatePassword = async (req, res, next) => { //[]
+    let id = req.params.id;
+    let newpassword = req.body.password;
+    try {
+        let checkforUser = await User.findOne({
+            _id: id
+        });
+        if (!checkforUser) {
+            return res.status(400).json({
+                icon: '&#xE5CD;',
+                style: 'error',
+                msg: "User Not Found"
+            });
+        } else {
+            const hashedPassword = await hashPassword(newpassword);
+            adminService.updatePassword(id, hashedPassword).then((data) => {
+                if (data) {
+                    res.status(201).json({ msg: "Your Password Updated Successfuly" });
+                } else {
+                    res.status(404).json({ msg: "Can't Update Your Password" });
+                }
+            }).catch(err => {
+                console.log(err);
+                res.status(500).json({ msg: 'Internal Server Error' });
+            })
+        }
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Error in Server");
+    }
+}
 // --------------------Add Car----------------------
 exports.addCar = async (req, res, next) => { //[]
     try {
-        const { Title, Images, Kilometers, Price, Condition, PreviousOwners, InspectionNew, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
+        const { Title, Images, Kilometers, Price, Condition, PreviousOwners, NextInspection, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
             , Fuel, Consumption, CO2Emission, EmissionClass, EmissionLabel
             , Brand, Model, FirstRegistration, BodyColor, PaintType, BodyColorOriginal, InteriorFittings, InteriorColors,
             Body, NrofDoors, NrofSeats, ModelCode, CountryVersion,
             ComfortAndConvenience, EntertainmentAndMedia, Extras, SafetyAndSecurity, Description, DateOfPost } = req.body
 
         const newCar = new Car({
-            Title, Images, Kilometers, Price, Condition, PreviousOwners, InspectionNew, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
+            Title, Images, Kilometers, Price, Condition, PreviousOwners, NextInspection, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
             , Fuel, Consumption, CO2Emission, EmissionClass, EmissionLabel
             , Brand, Model, FirstRegistration, BodyColor, PaintType, BodyColorOriginal, InteriorFittings, InteriorColors,
             Body, NrofDoors, NrofSeats, ModelCode, CountryVersion,
@@ -168,9 +227,9 @@ exports.getCars = async (req, res, next) => { //[]
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
-// ---------------------Get All Cars For Admin----------------------
-exports.getCarsForAdmin = async (req, res, next) => { //[]
-    adminService.getAllCarsForAdmin().then((data) => {
+// ---------------------Get All New Cars----------------------
+exports.getNewCars = async (req, res, next) => { //[]
+    adminService.getAllNewCars().then((data) => {
         if (data) {
             res.json(data);
         } else {
@@ -181,6 +240,32 @@ exports.getCarsForAdmin = async (req, res, next) => { //[]
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
+// ---------------------Get All Used Cars----------------------
+exports.getUsedCars = async (req, res, next) => { //[]
+    adminService.getAllUsedCars().then((data) => {
+        if (data) {
+            res.json(data);
+        } else {
+            res.status(404).json({ msg: 'Data Not Found' });
+        }
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({ msg: 'Internal Server Error' });
+    })
+}
+// // ---------------------Get All Cars For Admin----------------------
+// exports.getCarsForAdmin = async (req, res, next) => { //[]
+//     adminService.getAllCarsForAdmin().then((data) => {
+//         if (data) {
+//             res.json(data);
+//         } else {
+//             res.status(404).json({ msg: 'Data Not Found' });
+//         }
+//     }).catch(err => {
+//         console.log(err);
+//         res.status(500).json({ msg: 'Internal Server Error' });
+//     })
+// }
 // ---------------------Delete Car----------------------
 exports.deleteCar = async (req, res, next) => { //[]
     let id = req.params.id;
@@ -235,8 +320,23 @@ exports.increamentViews = async (req, res, next) => { //[]
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
+// ---------most viewed--------------
 exports.MostViewsCars = async (req, res, next) => { //[]
     adminService.getMostViewsCars().then((cars) => {
+        if (cars) {
+            res.json(cars);
+        } else {
+            res.status(404).json({ msg: 'Data Not Found' });
+        }
+    }).catch(err => {
+        console.log(err);
+        res.status(500).json({ msg: 'Internal Server Error' });
+    })
+}
+// ---------all most viewed--------------
+
+exports.AllMostViewsCars = async (req, res, next) => { //[]
+    adminService.getAllMostViewsCars().then((cars) => {
         if (cars) {
             res.json(cars);
         } else {
@@ -303,20 +403,34 @@ exports.addToFavourites = async (req, res, next) => {
 }
 
 // ---------------------Get All Cars----------------------
+// exports.filterCars = async (req, res, next) => { //[]
+//     console.log(req.query)
+//     const cardata = await Car.find();
+//     let response = [];
+//     const q = req.query;
+//     if (!Object.keys(q).length) {
+//         response = cardata;
+//     } else {
+//         // NO arrow functions here, we are using “THIS”
+//         response = cardata.filter(function (cars) {
+//             return Object.keys(this).every((key) => cars[key] <= this[key])
+//         }, q);
+//     }
+//     res.json(response);
+// }
+// --------------------------------------------------------------
 exports.filterCars = async (req, res, next) => { //[]
-    const cardata = await Car.find({ Reserved: 'no' });
+    const cardata = await Car.find();
     let response = [];
-    const q = req.query;
-    if (!Object.keys(q).length) {
-        response = cardata;
-    } else {
-        // NO arrow functions here, we are using “THIS”
-        response = cardata.filter(function (cars) {
-            return Object.keys(this).every((key) => cars[key] >= this[key])
-        }, q);
-    }
+
+    response = cardata.filter(function (cars) {
+        return (cars.Brand.toUpperCase().match(req.query.Brand.toUpperCase()) && cars.Body == req.query.Body && cars.Condition == req.query.Condition && cars.FirstRegistration >= req.query.FirstRegistration && cars.Kilometers <= req.query.Kilometers);
+    });
     res.json(response);
 }
+
+
+
 // --------------------------------------------------------------
 exports.home = (req, res) => {
     return res.sendFile(path.join(`${__dirname}/../views/index.html`));

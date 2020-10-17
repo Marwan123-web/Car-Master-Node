@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const carSchema = mongoose.Schema({
     DateOfPost: { type: String },
     Views: { type: Number },
-    Reserved: { type: String, default: 'no' },
+    Reserved: { type: String, default: 'No' },
     Title: { type: String },
     Images: [],
     Kilometers: { type: String },
@@ -10,7 +10,7 @@ const carSchema = mongoose.Schema({
     // State
     Condition: { type: String },
     PreviousOwners: { type: String },
-    InspectionNew: { type: String },
+    NextInspection: { type: String },
     Warranty: { type: String },
     FullService: { type: String },
     NonSmokingVehicle: { type: String },
