@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 var cors = require('cors');
+const multer = require('multer');
 // const User = require('./models/user');
 const routes = require('./routes/routes');
 
@@ -21,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(async(req, res, next) => {
+app.use(async (req, res, next) => {
     if (req.headers["x-access-token"]) {
         const accessToken = req.headers["x-access-token"];
         const { userId, exp } = await jwt.verify(accessToken, process.env.JWT_SECRET);

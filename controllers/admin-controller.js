@@ -45,7 +45,7 @@ exports.Register = async (req, res, next) => { //[]
             });
             newUser.accessToken = accessToken;
             await newUser.save();
-            res.status(200).json({ msg: 'Welcome', })
+            res.status(200).json({ msg: 'Welcome' })
         }
     } catch (error) {
         next(error)
@@ -98,7 +98,6 @@ exports.profile = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Your Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -113,7 +112,6 @@ exports.Password = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Your Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -142,7 +140,6 @@ exports.updateEmail = async (req, res, next) => { //[]
                 });
         }
     } catch (err) {
-        console.log(err.message);
         res.status(500).send("Error in Server");
     }
 }
@@ -168,34 +165,32 @@ exports.updatePassword = async (req, res, next) => { //[]
                     res.status(404).json({ msg: "Can't Update Your Password" });
                 }
             }).catch(err => {
-                console.log(err);
                 res.status(500).json({ msg: 'Internal Server Error' });
             })
         }
     } catch (err) {
-        console.log(err.message);
         res.status(500).send("Error in Server");
     }
 }
 // --------------------Add Car----------------------
-exports.addCar = async (req, res, next) => { //[]
+exports.addNewCar = async (req, res, next) => { //[]
     try {
-        const { Title, Images, Kilometers, Price, Condition, PreviousOwners, NextInspection, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
+        const { Title, Kilometers, Price, Condition, PreviousOwners,
+            NextInspection, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume,
+            DriveChain, Cylinders, HorsePower, Torque
             , Fuel, Consumption, CO2Emission, EmissionClass, EmissionLabel
             , Brand, Model, FirstRegistration, BodyColor, PaintType, BodyColorOriginal, InteriorFittings, InteriorColors,
             Body, NrofDoors, NrofSeats, ModelCode, CountryVersion,
-            ComfortAndConvenience, EntertainmentAndMedia, Extras, SafetyAndSecurity, Description, DateOfPost } = req.body
-
+            ComfortAndConvenience, EntertainmentAndMedia, Extras, SafetyAndSecurity, Description, DateOfPost } = req.body;
         const newCar = new Car({
-            Title, Images, Kilometers, Price, Condition, PreviousOwners, NextInspection, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
+            Title, Kilometers, Price, Condition, PreviousOwners, NextInspection, Warranty, FullService, NonSmokingVehicle, GearingType, EngineVolume, DriveChain, Cylinders, HorsePower, Torque
             , Fuel, Consumption, CO2Emission, EmissionClass, EmissionLabel
             , Brand, Model, FirstRegistration, BodyColor, PaintType, BodyColorOriginal, InteriorFittings, InteriorColors,
             Body, NrofDoors, NrofSeats, ModelCode, CountryVersion,
             ComfortAndConvenience, EntertainmentAndMedia, Extras, SafetyAndSecurity, Description, DateOfPost
         });
         await newCar.save();
-        res.status(200).json({ msg: 'Car Added Successfuly' })
-
+        res.status(200).json({ msg: 'Car Added Successfuly' });
     } catch (error) {
         next(error)
     }
@@ -210,7 +205,6 @@ exports.getCar = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -223,7 +217,6 @@ exports.getCars = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -236,7 +229,6 @@ exports.getNewCars = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -249,7 +241,6 @@ exports.getUsedCars = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -274,7 +265,6 @@ exports.deleteCar = async (req, res, next) => { //[]
             res.status(201).json({ msg: 'Car Deleted Successfuly' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: "Internal Server Error" });
     });
 }
@@ -303,7 +293,6 @@ exports.updateCar = async (req, res, next) => { //[]
                 });
         }
     } catch (err) {
-        console.log(err.message);
         res.status(500).send("Error in Server");
     }
 }
@@ -316,7 +305,6 @@ exports.increamentViews = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -329,7 +317,6 @@ exports.MostViewsCars = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -343,7 +330,6 @@ exports.AllMostViewsCars = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -355,7 +341,6 @@ exports.RecentCars = async (req, res, next) => { //[]
             res.status(404).json({ msg: 'Data Not Found' });
         }
     }).catch(err => {
-        console.log(err);
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
@@ -395,13 +380,25 @@ exports.addToFavourites = async (req, res, next) => {
                 res.status(404).json({ msg: 'Something Was Wrong' });
             }
         }).catch(err => {
-            console.log(err);
             res.status(500).json({ msg: 'Internal Server Error' });
         })
     }
 
 }
+exports.deleteFromFavourites = async (req, res, next) => { //[]
+    let id = req.params.id;
+    let carId = req.params.carid;
+    adminService.deleteFromFavourites(id, carId).then((car) => {
+        if (car) {
+            res.json({ msg: 'Car Deleted Successfuly From Favourites' });
+        } else {
+            res.status(404).json({ msg: 'Something Was Wrong' });
+        }
+    }).catch(err => {
+        res.status(500).json({ msg: 'Internal Server Error' });
+    })
 
+}
 // ---------------------Get All Cars----------------------
 // exports.filterCars = async (req, res, next) => { //[]
 //     console.log(req.query)
@@ -436,21 +433,51 @@ exports.home = (req, res) => {
     return res.sendFile(path.join(`${__dirname}/../views/index.html`));
 };
 exports.multipleUpload = async (req, res) => {
+    let DateOfPost = req.params.DateOfPost
     try {
         await upload(req, res);
-        // console.log(req.files);
-
         if (req.files.length <= 0) {
             return res.send(`You must select at least 1 file.`);
         }
-
-        return res.send(`Files has been uploaded.`);
+        adminService.pushCarPhoto(DateOfPost, req.files[0].filename).then((carphoto) => {
+            if (carphoto) {
+                res.send(`Files has been uploaded.`);
+            } else {
+                res.status(404).json({ msg: 'Data Not Found' });
+            }
+        }).catch(err => {
+            res.status(500).json({ msg: 'Internal Server Error' });
+        });
     } catch (error) {
-        // console.log(error);
-
         if (error.code === "LIMIT_UNEXPECTED_FILE") {
             return res.send("Too many files to upload.");
         }
         return res.send(`Error when trying upload many files: ${error}`);
     }
+
 };
+
+
+exports.getMyFavourties = async (req, res, next) => { //[]
+    let id = req.params.id;
+    let fav = await adminService.getMyFavourties(id)
+    let emptyarr = []
+    if (fav.favourites) {
+        let arr = [];
+        let arr2 = [];
+        for (let i = 0; i < fav.favourites.length; i++) {
+            arr[i] = fav.favourites[i].carId
+        }
+        for (let y = 0; y < fav.favourites.length; y++) {
+            let x = await adminService.getCarData(arr[y]);
+            if (x) {
+                let data = arr[y];
+                let carDate = { data, x }
+                arr2[y] = carDate
+            }
+        }
+        res.json(arr2);
+    } else if (!fav.favourites) {
+        res.json(emptyarr)
+    }
+}

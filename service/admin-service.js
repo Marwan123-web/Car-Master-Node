@@ -44,6 +44,14 @@ class adminService {
             { multi: true } // set this to true if you want to remove multiple elements.
         );
     }
+    static async deleteFromFavourites(id, carId) {
+        var car = { carId };
+        return User.findOne({ _id: id }).updateOne(
+            {}, // your query, usually match by _id
+            { $pull: { favourites: car } }, // item(s) to match from array you want to pull/remove
+            { multi: true } // set this to true if you want to remove multiple elements.
+        );
+    }
 
     static async increamentCarViews(id) {
         return Car.updateOne(
@@ -80,5 +88,18 @@ class adminService {
             }
         })
     }
+
+    static async pushCarPhoto(DateOfPost, photo) {
+        return Car.findOne({ DateOfPost }).updateOne(
+            {}, // your query, usually match by _id
+            { $push: { Images: photo } }, // item(s) to match from array you want to pull/remove
+            { multi: true } // set this to true if you want to remove multiple elements.
+        );
+    }
+
+    static async getMyFavourties(id) {
+        return User.findOne({ _id: id }, { "favourites.carId": 1 })
+    }
+
 }
 module.exports = adminService;

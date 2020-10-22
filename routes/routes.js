@@ -7,6 +7,8 @@ router.post('/register', adminController.Register);
 
 router.post('/login', adminController.login);
 
+router.post('/addnewcar', adminController.addNewCar);
+
 router.get('/profile/:id', adminController.profile);
 
 router.get('/mypassword/:id', adminController.Password);
@@ -21,7 +23,7 @@ router.put('/updatepassword/:id', adminController.updatePassword);
 
 
 //------------------------Car-------------------
-router.post('/addcar', adminController.addCar);
+
 
 router.get('/car/:id', adminController.getCar);
 
@@ -45,6 +47,9 @@ router.put('/incrementviews/:id', adminController.increamentViews);
 
 router.post('/addtofavourites/:id/:carid', adminController.addToFavourites);
 
+router.delete('/deletefromfavourites/:id/:carid', adminController.deleteFromFavourites);
+
+
 
 router.get('/filter/cars', adminController.filterCars);
 router.get('/mostviewscars', adminController.MostViewsCars);
@@ -53,11 +58,13 @@ router.get('/allmostviewscars', adminController.AllMostViewsCars);
 
 router.get('/latestcars', adminController.RecentCars);
 
+router.get('/myfavourties/:id', adminController.getMyFavourties);
+
+
 
 
 router.get("/", adminController.home);
-router.post("/multiple-upload", adminController.multipleUpload);
-
+router.post("/multiple-upload/:DateOfPost", adminController.multipleUpload);
 
 
 
