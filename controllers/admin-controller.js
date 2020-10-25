@@ -399,30 +399,38 @@ exports.deleteFromFavourites = async (req, res, next) => { //[]
     })
 
 }
-// ---------------------Get All Cars----------------------
-// exports.filterCars = async (req, res, next) => { //[]
-//     console.log(req.query)
-//     const cardata = await Car.find();
-//     let response = [];
-//     const q = req.query;
-//     if (!Object.keys(q).length) {
-//         response = cardata;
-//     } else {
-//         // NO arrow functions here, we are using “THIS”
-//         response = cardata.filter(function (cars) {
-//             return Object.keys(this).every((key) => cars[key] <= this[key])
-//         }, q);
-//     }
-//     res.json(response);
-// }
 // --------------------------------------------------------------
 exports.filterCars = async (req, res, next) => { //[]
-    const cardata = await Car.find();
+    let cardata = await Car.find();
     let response = [];
 
-    response = cardata.filter(function (cars) {
-        return (cars.Brand.toUpperCase().match(req.query.Brand.toUpperCase()) && cars.Body == req.query.Body && cars.Condition == req.query.Condition && cars.FirstRegistration >= req.query.FirstRegistration && cars.Kilometers <= req.query.Kilometers);
-    });
+    const kilo = req.query.Kilometers;
+    const year = req.query.FirstRegistration;
+
+
+    // console.log(req.query)
+    if (req.query) {
+        cardata = cardata.filter(function (cars) {
+            return Number(cars.Kilometers) <= kilo
+                && Number(cars.FirstRegistration) >= year
+        });
+    }
+    if (req.query.Brand && req.query.Brand != "undefined") {
+        cardata = cardata.filter(function (cars) {
+            return cars.Brand.toUpperCase().match(req.query.Brand.toUpperCase());
+        });
+    }
+    if (req.query.Body && req.query.Body != "undefined") {
+        cardata = cardata.filter(function (cars) {
+            return cars.Body == req.query.Body;
+        });
+    }
+    if (req.query.Condition && req.query.Condition != "undefined") {
+        cardata = cardata.filter(function (cars) {
+            return cars.Condition == req.query.Condition;
+        });
+    }
+    response = cardata;
     res.json(response);
 }
 
