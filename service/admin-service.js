@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const Car = require('../models/car');
+const { Cipher } = require('crypto');
+const { Console } = require('console');
 class adminService {
 
     static getMyData(id) {
@@ -89,10 +91,12 @@ class adminService {
         })
     }
 
-    static async pushCarPhoto(DateOfPost, photo) {
+    static async pushCarPhoto(DateOfPost, file) {
+        let filename = file.filename;
+        let filedata = { filename }
         return Car.findOne({ DateOfPost }).updateOne(
             {}, // your query, usually match by _id
-            { $push: { Images: photo } }, // item(s) to match from array you want to pull/remove
+            { $push: { Images: filedata } }, // item(s) to match from array you want to pull/remove
             { multi: true } // set this to true if you want to remove multiple elements.
         );
     }

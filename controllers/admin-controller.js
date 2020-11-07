@@ -5,6 +5,7 @@ const express = require('express');
 const app = express();
 const upload = require("../middleware/upload");
 const path = require("path");
+const fs = require('fs');
 app.use(boolParser());
 async function hashPassword(password) {
     return await bcrypt.hash(password, 10);
@@ -385,6 +386,20 @@ exports.addToFavourites = async (req, res, next) => {
     }
 
 }
+exports.checkFavourties = async (req, res, next) => {
+    let id = req.params.id;
+    let carId = req.params.carid;
+    let checkforFavouriteCar = await User.findOne({
+        _id: id,
+    }, { favourites: { $elemMatch: { carId } } });
+    if (checkforFavouriteCar.favourites.length > 0) {
+        return res.status(200).json(true);
+    }
+    else {
+        return res.status(200).json(false);
+    }
+
+}
 exports.deleteFromFavourites = async (req, res, next) => { //[]
     let id = req.params.id;
     let carId = req.params.carid;
@@ -438,7 +453,12 @@ exports.filterCars = async (req, res, next) => { //[]
 
 // --------------------------------------------------------------
 exports.home = (req, res) => {
-    return res.sendFile(path.join(`${__dirname}/../views/index.html`));
+    console.log('start')
+    // return res.sendFile(path.join(`${__dirname}/../views/index.html`));
+    // console.log(path.join(__dirname, "/../newimages"))
+    // app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
+    // return express.static(path.join(__dirname, "/../newimages"));
+    return app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
 };
 exports.multipleUpload = async (req, res) => {
     let DateOfPost = req.params.DateOfPost
@@ -447,7 +467,8 @@ exports.multipleUpload = async (req, res) => {
         if (req.files.length <= 0) {
             return res.send(`You must select at least 1 file.`);
         }
-        adminService.pushCarPhoto(DateOfPost, req.files[0].filename).then((carphoto) => {
+        // console.log(req.files[0])
+        adminService.pushCarPhoto(DateOfPost, req.files[0]).then((carphoto) => {
             if (carphoto) {
                 res.send(`Files has been uploaded.`);
             } else {
@@ -488,4 +509,25 @@ exports.getMyFavourties = async (req, res, next) => { //[]
     } else if (!fav.favourites) {
         res.json(emptyarr)
     }
+}
+
+
+
+exports.getAllImagesPath = async (req, res, next) => {
+    const dirnameExportImg = path.join(__dirname, "/../newimages")
+    fs.readdir(dirnameExportImg, function (err, files) {
+        files = files.map(function (fileName) {
+            return {
+                name: fileName,
+                time: fs.statSync(dirnameExportImg + '/' + fileName).mtime.getTime()
+            };
+        })
+            .sort(function (a, b) {
+                return b.time - a.time;
+            })
+            .map(function (v) {
+                return v.name;
+            });
+        res.json(files)
+    });
 }

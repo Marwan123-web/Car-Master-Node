@@ -4,7 +4,9 @@ const carSchema = mongoose.Schema({
     Views: { type: Number },
     Reserved: { type: String, default: 'No' },
     Title: { type: String },
-    Images: [],
+    Images: [{
+        filename:{ type: String },
+    }],
     Kilometers: { type: String },
     Price: { type: String },
     // State
