@@ -63,13 +63,16 @@ router.get('/myfavourties/:id', adminController.getMyFavourties);
 
 router.get('/checkinfavourties/:id/:carid', adminController.checkFavourties);
 
-
-
-router.post("/multiple-upload/:DateOfPost", adminController.multipleUpload);
+router.post(
+    "/multiple-upload/:carId", uploadController.uploadImages,
+    uploadController.resizeImages, uploadController.getResult);
 
 router.get('/allimages', adminController.getAllImagesPath);
 
-// router.get('/image/:image', adminController.home);
+// router.post("/multiple-upload/:DateOfPost", adminController.multipleUpload);
+
+// router.get('/', adminController.home);
+
 // router.post("/multiple-upload", adminController.multipleUpload);
 // router.use('/image/', express.static(__dirname+'/public/assets/category_pic/'));
 

@@ -1,6 +1,6 @@
 const multer = require("multer");
 const sharp = require("sharp");
-
+const adminService = require('../service/admin-service');
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
@@ -16,7 +16,7 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
-const uploadFiles = upload.array("images", 10);
+const uploadFiles = upload.array("images", 30);
 
 const uploadImages = (req, res, next) => {
   uploadFiles(req, res, err => {
@@ -45,7 +45,7 @@ const resizeImages = async (req, res, next) => {
         .resize(640, 320)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`upload/${newFilename}`);
+        .toFile(`newimages/${newFilename}`);
 
       req.body.images.push(newFilename);
     })
@@ -59,11 +59,22 @@ const getResult = async (req, res) => {
     return res.send(`You must select at least 1 image.`);
   }
 
-  const images = req.body.images
-    .map(image => "" + image + "")
-    .join("");
+  const images = req.body.images;
+  // .map(image => "" + image + "")
+  // .join("");
+  // return res.send(`Images were uploaded:${images}`);
 
-  return res.send(`Images were uploaded:${images}`);
+  let carId = req.params.carId;
+  adminService.pushCarPhoto(carId, images[0]).then((carphoto) => {
+    if (carphoto) {
+      res.send(`Image has been uploaded.`);
+    } else {
+      res.status(404).json({ msg: 'Data Not Found' });
+    }
+  }).catch(err => {
+    res.status(500).json({ msg: 'Internal Server Error' });
+  });
+
 };
 
 module.exports = {

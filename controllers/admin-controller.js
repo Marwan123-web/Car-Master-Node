@@ -4,7 +4,10 @@ const boolParser = require('express-query-boolean');
 const express = require('express');
 const app = express();
 const upload = require("../middleware/upload");
+const uploadController = require('../middleware/uploadwithresize');
 const path = require("path");
+const multer = require("multer");
+const sharp = require("sharp");
 const fs = require('fs');
 app.use(boolParser());
 async function hashPassword(password) {
@@ -190,8 +193,9 @@ exports.addNewCar = async (req, res, next) => { //[]
             Body, NrofDoors, NrofSeats, ModelCode, CountryVersion,
             ComfortAndConvenience, EntertainmentAndMedia, Extras, SafetyAndSecurity, Description, DateOfPost
         });
+        let CarId = newCar._id;
         await newCar.save();
-        res.status(200).json({ msg: 'Car Added Successfuly' });
+        res.status(200).json(CarId);
     } catch (error) {
         next(error)
     }
@@ -261,6 +265,10 @@ exports.getUsedCars = async (req, res, next) => { //[]
 // ---------------------Delete Car----------------------
 exports.deleteCar = async (req, res, next) => { //[]
     let id = req.params.id;
+    let usersWhoFavThisCar = await User.find({ 'favourites.carId': { $in: [id] } }, { _id: 1 });
+    for (let i = 0; i < usersWhoFavThisCar.length; i++) {
+        adminService.deleteFromFavourites(usersWhoFavThisCar[i], id)
+    }
     adminService.deleteCar(id).then((car) => {
         if (car) {
             res.status(201).json({ msg: 'Car Deleted Successfuly' });
@@ -345,19 +353,6 @@ exports.RecentCars = async (req, res, next) => { //[]
         res.status(500).json({ msg: 'Internal Server Error' });
     })
 }
-// // ---------------------Get All Cars----------------------
-// exports.searchForCars = async (req, res, next) => { //[]
-//     adminService.getSearchCars().then((data) => {
-//         if (data) {
-//             res.json(data);
-//         } else {
-//             res.status(404).json({ msg: 'Data Not Found' });
-//         }
-//     }).catch(err => {
-//         console.log(err);
-//         res.status(500).json({ msg: 'Internal Server Error' });
-//     })
-// }
 
 // ---------------------Add Car To Favourites----------------------
 exports.addToFavourites = async (req, res, next) => {
@@ -453,39 +448,37 @@ exports.filterCars = async (req, res, next) => { //[]
 
 // --------------------------------------------------------------
 exports.home = (req, res) => {
-    console.log('start')
-    // return res.sendFile(path.join(`${__dirname}/../views/index.html`));
+    // return res.sendFile(path.join(`${__dirname}/../views/index2.html`));
     // console.log(path.join(__dirname, "/../newimages"))
     // app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
     // return express.static(path.join(__dirname, "/../newimages"));
-    return app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
+    // return app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
 };
-exports.multipleUpload = async (req, res) => {
-    let DateOfPost = req.params.DateOfPost
-    try {
-        await upload(req, res);
-        if (req.files.length <= 0) {
-            return res.send(`You must select at least 1 file.`);
-        }
-        // console.log(req.files[0])
-        adminService.pushCarPhoto(DateOfPost, req.files[0]).then((carphoto) => {
-            if (carphoto) {
-                res.send(`Files has been uploaded.`);
-            } else {
-                res.status(404).json({ msg: 'Data Not Found' });
-            }
-        }).catch(err => {
-            res.status(500).json({ msg: 'Internal Server Error' });
-        });
-    } catch (error) {
-        if (error.code === "LIMIT_UNEXPECTED_FILE") {
-            return res.send("Too many files to upload.");
-        }
-        return res.send(`Error when trying upload many files: ${error}`);
-    }
+// exports.multipleUpload = async (req, res) => {
+//     let DateOfPost = req.params.DateOfPost
+//     try {
+//         await upload(req, res);
+//         if (req.files.length <= 0) {
+//             return res.send(`You must select at least 1 file.`);
+//         }
+//         // console.log(req.files[0])
+//         adminService.pushCarPhoto(DateOfPost, req.files[0]).then((carphoto) => {
+//             if (carphoto) {
+//                 res.send(`Files has been uploaded.`);
+//             } else {
+//                 res.status(404).json({ msg: 'Data Not Found' });
+//             }
+//         }).catch(err => {
+//             res.status(500).json({ msg: 'Internal Server Error' });
+//         });
+//     } catch (error) {
+//         if (error.code === "LIMIT_UNEXPECTED_FILE") {
+//             return res.send("Too many files to upload.");
+//         }
+//         return res.send(`Error when trying upload many files: ${error}`);
+//     }
 
-};
-
+// };
 
 exports.getMyFavourties = async (req, res, next) => { //[]
     let id = req.params.id;
@@ -531,3 +524,4 @@ exports.getAllImagesPath = async (req, res, next) => {
         res.json(files)
     });
 }
+

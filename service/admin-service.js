@@ -79,7 +79,7 @@ class adminService {
     static async getlatestCars() {
         return Car.aggregate([
             { $project: { Views: 1, Price: 1, Title: 1, DateOfPost: 1, Brand: 1, Model: 1, Images: 1 } },
-            { $sort: { DateOfPost: -1 } },
+            { $sort: { _id: -1 } },
         ]).limit(5);
     }
 
@@ -91,10 +91,10 @@ class adminService {
         })
     }
 
-    static async pushCarPhoto(DateOfPost, file) {
-        let filename = file.filename;
+    static async pushCarPhoto(carId, file) {
+        let filename = file;
         let filedata = { filename }
-        return Car.findOne({ DateOfPost }).updateOne(
+        return Car.findOne({ _id: carId }).updateOne(
             {}, // your query, usually match by _id
             { $push: { Images: filedata } }, // item(s) to match from array you want to pull/remove
             { multi: true } // set this to true if you want to remove multiple elements.
