@@ -9,6 +9,8 @@ const path = require("path");
 const multer = require("multer");
 const sharp = require("sharp");
 const fs = require('fs');
+const Image = require('../models/images');
+
 app.use(boolParser());
 async function hashPassword(password) {
     return await bcrypt.hash(password, 10);
@@ -447,38 +449,14 @@ exports.filterCars = async (req, res, next) => { //[]
 
 
 // --------------------------------------------------------------
-exports.home = (req, res) => {
-    // return res.sendFile(path.join(`${__dirname}/../views/index2.html`));
-    // console.log(path.join(__dirname, "/../newimages"))
-    // app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
-    // return express.static(path.join(__dirname, "/../newimages"));
-    // return app.use('/image/', express.static(path.join(__dirname, "/../newimages")));
+exports.getImage = (req, res) => {
+    var name = req.params.name;
+    Image.findOne({ name: name }, (err, result) => {
+        if (err) return console.log(err)
+        res.contentType('image/jpeg');
+        res.send(result.data)
+    })
 };
-// exports.multipleUpload = async (req, res) => {
-//     let DateOfPost = req.params.DateOfPost
-//     try {
-//         await upload(req, res);
-//         if (req.files.length <= 0) {
-//             return res.send(`You must select at least 1 file.`);
-//         }
-//         // console.log(req.files[0])
-//         adminService.pushCarPhoto(DateOfPost, req.files[0]).then((carphoto) => {
-//             if (carphoto) {
-//                 res.send(`Files has been uploaded.`);
-//             } else {
-//                 res.status(404).json({ msg: 'Data Not Found' });
-//             }
-//         }).catch(err => {
-//             res.status(500).json({ msg: 'Internal Server Error' });
-//         });
-//     } catch (error) {
-//         if (error.code === "LIMIT_UNEXPECTED_FILE") {
-//             return res.send("Too many files to upload.");
-//         }
-//         return res.send(`Error when trying upload many files: ${error}`);
-//     }
-
-// };
 
 exports.getMyFavourties = async (req, res, next) => { //[]
     let id = req.params.id;

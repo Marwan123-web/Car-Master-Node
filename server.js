@@ -47,7 +47,7 @@ app.use(async (req, res, next) => {
 // app.use(allowCrossDomain)
 
 
-app.use('/image/', express.static(path.join(__dirname, "newimages")));
+// app.use('/image/', express.static(path.join(__dirname, "newimages")));
 app.use('/', routes);
 
 app.listen(PORT, () => {

@@ -2,7 +2,7 @@ const multer = require("multer");
 const sharp = require("sharp");
 const adminService = require('../service/admin-service');
 const multerStorage = multer.memoryStorage();
-
+const Image = require('../models/images')
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -45,8 +45,24 @@ const resizeImages = async (req, res, next) => {
         .resize(640, 320)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`newimages/${newFilename}`);
-
+        // .toFile(`newimages/${newFilename}`)
+        .then((data) => {
+          // console.log(file.buffer);
+          var obj = {
+            name: newFilename,
+            data: file.buffer,
+            contentType: file.mimetype
+          }
+          Image.create(obj, (err, image) => {
+            if (err) {
+              console.log(err);
+            }
+            else {
+              image.save();
+              // res.redirect('/'); 
+            }
+          });
+        });
       req.body.images.push(newFilename);
     })
   );
@@ -74,7 +90,6 @@ const getResult = async (req, res) => {
   }).catch(err => {
     res.status(500).json({ msg: 'Internal Server Error' });
   });
-
 };
 
 module.exports = {

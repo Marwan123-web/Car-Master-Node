@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/admin-controller');
 const userController = require('../controllers/user-controller');
-const uploadController = require('../middleware/uploadwithresize')
+const uploadController = require('../middleware/uploadwithresize');
+
 //------------------------User-------------------
 router.post('/register', adminController.Register);
 
@@ -72,7 +73,7 @@ router.get('/allimages', adminController.getAllImagesPath);
 // router.post("/multiple-upload/:DateOfPost", adminController.multipleUpload);
 
 // router.get('/', adminController.home);
-
+router.get('/image/:name', adminController.getImage);
 // router.post("/multiple-upload", adminController.multipleUpload);
 // router.use('/image/', express.static(__dirname+'/public/assets/category_pic/'));
 
