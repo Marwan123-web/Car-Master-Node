@@ -24,6 +24,7 @@ const User = require('../models/user');
 const Car = require('../models/car');
 
 const adminService = require('../service/admin-service');
+const images = require('../models/images');
 const possibleQueryVars = [
     'Kilometers',
     'Price',
@@ -485,21 +486,7 @@ exports.getMyFavourties = async (req, res, next) => { //[]
 
 
 exports.getAllImagesPath = async (req, res, next) => {
-    const dirnameExportImg = path.join(__dirname, "/../newimages")
-    fs.readdir(dirnameExportImg, function (err, files) {
-        files = files.map(function (fileName) {
-            return {
-                name: fileName,
-                time: fs.statSync(dirnameExportImg + '/' + fileName).mtime.getTime()
-            };
-        })
-            .sort(function (a, b) {
-                return b.time - a.time;
-            })
-            .map(function (v) {
-                return v.name;
-            });
-        res.json(files)
-    });
+    let allImages = await images.find({}, { name: 1 });
+    res.json(allImages);
 }
 

@@ -45,12 +45,13 @@ const resizeImages = async (req, res, next) => {
         .resize(640, 320)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
+        .toBuffer()
         // .toFile(`newimages/${newFilename}`)
         .then((data) => {
           // console.log(file.buffer);
           var obj = {
             name: newFilename,
-            data: file.buffer,
+            data: data,
             contentType: file.mimetype
           }
           Image.create(obj, (err, image) => {
