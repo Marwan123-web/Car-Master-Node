@@ -44,7 +44,10 @@ const resizeImages = async (req, res, next) => {
       await sharp(file.buffer)
         .resize(640, 320)
         .toFormat("jpeg")
-        .jpeg({ quality: 90 })
+        .jpeg({
+          quality: 100,
+          chromaSubsampling: '4:4:4'
+        })
         .toBuffer()
         // .toFile(`newimages/${newFilename}`)
         .then((data) => {
